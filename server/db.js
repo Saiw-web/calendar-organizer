@@ -1,11 +1,15 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const isProduction = process.env.NODE_ENV === 'production';
-
+const url = new URL(process.env.DATABASE_URL);
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
+  host: url.hostname,
+  port: url.port,
+  database: url.pathname.slice(1),
+  user: url.username,
+  password: url.password,
+  ssl: { rejectUnauthorized: false },
+  family: 4,
 });
 
 const initDb = async () => {
